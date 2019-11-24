@@ -65,6 +65,11 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>com.github.trex-paxos</groupId>
+      <artifactId>simple-record-store</artifactId>
+      <version>1.0.0-RC5</version>
+    </dependency>
+    <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-core</artifactId>
       <version>${jmh.version}</version>
@@ -168,11 +173,6 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2-mvstore</artifactId>
       <version>1.4.192</version>
-    </dependency>
-    <dependency>
-      <groupId>org.rocksdb</groupId>
-      <artifactId>rocksdbjni</artifactId>
-      <version>4.8.0</version>
     </dependency>
     <!-- need explicit chronicle-* dependencies to resolve dependency convergence errors caused by chronicle-map importing multiple versions of transient dependencies -->
     <dependency>
@@ -309,58 +309,6 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <configuration>
-          <usedDependencies>
-            <usedDependency>org.openjdk.jmh:jmh-generator-annprocess</usedDependency>
-            <usedDependency>org.deephacks.lmdbjni:lmdbjni-linux64</usedDependency>
-            <usedDependency>org.fusesource.leveldbjni:leveldbjni-linux64</usedDependency>
-            <usedDependency>org.lwjgl:lwjgl</usedDependency>
-            <usedDependency>org.lwjgl:lwjgl-lmdb</usedDependency>
-            <usedDependency>net.openhft:chronicle-core</usedDependency>
-            <usedDependency>net.openhft:chronicle-bytes</usedDependency>
-            <usedDependency>net.openhft:chronicle-threads</usedDependency>
-          </usedDependencies>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-pmd-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.basepom.maven</groupId>
-        <artifactId>duplicate-finder-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>au.com.acegi</groupId>
-        <artifactId>xml-format-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
@@ -388,6 +336,14 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>9</source>
+          <target>9</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>
