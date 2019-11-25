@@ -20,8 +20,8 @@
 
 package org.lmdbjava.bench;
 
-import com.github.simbo1905.srs.ByteSequence;
-import com.github.simbo1905.srs.FileRecordStore;
+import com.github.trex_paxos.srs.ByteSequence;
+import com.github.trex_paxos.srs.FileRecordStore;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.openjdk.jmh.annotations.*;
@@ -39,12 +39,18 @@ import static org.openjdk.jmh.annotations.Mode.SampleTime;
 import static org.openjdk.jmh.annotations.Scope.Benchmark;
 
 @OutputTimeUnit(MILLISECONDS)
+//@Fork(jvmArgsAppend = {"-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005", "-ea"})
 @Fork(1)
 @Warmup(iterations = 3)
 @Measurement(iterations = 3)
 @BenchmarkMode(SampleTime)
 @SuppressWarnings({"checkstyle:javadoctype", "checkstyle:designforextension"})
 public class SimpleRecordStore {
+
+//  static {
+//    Logger.getLogger("").setLevel(java.util.logging.Level.FINEST);
+//    Logger.getLogger("").getHandlers()[0].setLevel(java.util.logging.Level.FINEST);
+//  }
 
   // FileRecordStore does not provide ordered keys, so no CRC/XXH64/rev/prev test
   @Benchmark
@@ -118,7 +124,7 @@ public class SimpleRecordStore {
         } else {
           wvb.putInt(0, key);
         }
-        ByteSequence k = ByteSequence.of(wkb.byteArray());
+        ByteSequence k = ByteSequence.copyOf(wkb.byteArray());
         if( !map.recordExists(k)){
           map.insertRecord(k, wvb.byteArray());
         } else {
