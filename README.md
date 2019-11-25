@@ -1,31 +1,21 @@
-[![Build Status](https://travis-ci.org/lmdbjava/benchmarks.svg?branch=master)](https://travis-ci.org/lmdbjava/benchmarks)
 [![License](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-# LmdbJava Benchmarks
+# SimpleRecordStore Benchmarks
 
-**Just want the latest results?
-[View them here!](https://github.com/lmdbjava/benchmarks/blob/master/results/20160710/README.md)**
+This is a fork and modification of the [JMH](http://openjdk.java.net/projects/code-tools/jmh/) benchmark
+of open source, embedded, pure java, disk backed, key-value stores available from Java:
 
-This is a [JMH](http://openjdk.java.net/projects/code-tools/jmh/) benchmark
-of open source, embedded, memory-mapped, key-value stores available from Java:
-
-* [LmdbJava](https://github.com/lmdbjava/lmdbjava) (with fast `ByteBuffer`, safe
-  `ByteBuffer` and an [Agrona](https://github.com/real-logic/Agrona) buffer)
-* [LMDBJNI](https://github.com/deephacks/lmdbjni)
-* [Lightweight Java Game Library](https://github.com/LWJGL/lwjgl3/) (LMDB API)
-* [LevelDBJNI](https://github.com/fusesource/leveldbjni)
-* [RocksDB](http://rocksdb.org/)
 * [MVStore](http://h2database.com/html/mvstore.html) (pure Java)
 * [MapDB](http://www.mapdb.org/) (pure Java)
 * [Xodus](https://github.com/JetBrains/xodus) (pure Java)
 * [Chroncile Map](https://github.com/OpenHFT/Chronicle-Map) (pure Java) (**)
+* [SimpleRecordStore](https://github.com/simbo1905/simple-record-store) (pure Java) (**)
 
 (**) does not support ordered keys, so iteration benchmarks not performed
 
-The benchmark itself is adapted from LMDB's
-[db_bench_mdb.cc](http://lmdb.tech/bench/microbench/db_bench_mdb.cc), which in
-turn is adapted from
-[LevelDB's benchmark](https://github.com/google/leveldb/blob/master/db/db_bench.cc).
+The benchmark itself is adapted from lmdbjava's [benchmarks](https://github.com/lmdbjava/benchmarks) which were 
+adapted from LMDB's [db_bench_mdb.cc](http://lmdb.tech/bench/microbench/db_bench_mdb.cc), which in
+turn is adapted from [LevelDB's benchmark](https://github.com/google/leveldb/blob/master/db/db_bench.cc).
 
 The benchmark includes:
 
@@ -78,16 +68,6 @@ iteration counts (`num`), key sizes and layout (`intKey`), value sizes
 sparse files are typical), but the actual on-disk space used. The underlying
 storage location defaults to the temporary file system. To force an alternate
 location, invoke Java with `-Djava.io.tmpdir=/somewhere/you/like`.
-
-## Support
-
-Please [open a GitHub issue](https://github.com/lmdbjava/benchmarks/issues)
-if you have any questions.
-
-## Contributing
-
-Contributions are welcome! Please see the LmdbJava project's
-[Contributing Guidelines](https://github.com/lmdbjava/lmdbjava/blob/master/CONTRIBUTING.md).
 
 ## License
 
