@@ -67,7 +67,7 @@
     <dependency>
       <groupId>com.github.trex-paxos</groupId>
       <artifactId>simple-record-store</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>:x</version>
     </dependency>
     <dependency>
       <groupId>org.openjdk.jmh</groupId>
