@@ -30,6 +30,7 @@ import org.openjdk.jmh.infra.Blackhole;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -63,6 +64,24 @@ public class SimpleRecordStore {
       }
       bh.consume(r.map.readRecordData(ByteSequence.of(r.wkb.byteArray())));
     }
+  }
+
+  @Benchmark
+  public void readCrc(final Reader r, final Blackhole bh) {
+    r.crc.reset();
+    final Iterator<ByteSequence> iter = r.map.keys().iterator();
+    while (iter.hasNext()) {
+      final ByteSequence k = iter.next();
+      final byte[] v;
+      try {
+        v = r.map.readRecordData(k);
+      } catch (IOException e) {
+        throw new RuntimeException(e.getMessage(), e);
+      }
+      r.crc.update(k.bytes());
+      r.crc.update(v);
+    }
+    bh.consume(r.crc.getValue());
   }
 
   @Benchmark

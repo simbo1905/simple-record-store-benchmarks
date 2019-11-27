@@ -99,19 +99,6 @@ public class Xodus {
   }
 
   @Benchmark
-  public void readXxh64(final Reader r, final Blackhole bh) {
-    long result = 0;
-    try (Cursor c = r.store.openCursor(r.tx)) {
-      while (c.getNext()) {
-        result += xx_r39().hashBytes(c.getKey().getBytesUnsafe(), 0, r.keySize);
-        result += xx_r39().
-            hashBytes(c.getValue().getBytesUnsafe(), 0, r.valSize);
-      }
-    }
-    bh.consume(result);
-  }
-
-  @Benchmark
   public void write(final Writer w, final Blackhole bh) {
     w.write();
   }

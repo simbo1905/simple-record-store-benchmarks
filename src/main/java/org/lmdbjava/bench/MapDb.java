@@ -95,18 +95,6 @@ public class MapDb {
   }
 
   @Benchmark
-  public void readXxh64(final Reader r, final Blackhole bh) {
-    long result = 0;
-    final Iterator<Entry<byte[], byte[]>> iterator = r.map.entryIterator();
-    while (iterator.hasNext()) {
-      final Entry<byte[], byte[]> entry = iterator.next();
-      result += xx_r39().hashBytes(entry.getKey());
-      result += xx_r39().hashBytes(entry.getValue());
-    }
-    bh.consume(result);
-  }
-
-  @Benchmark
   public void write(final Writer w, final Blackhole bh) {
     w.write();
   }

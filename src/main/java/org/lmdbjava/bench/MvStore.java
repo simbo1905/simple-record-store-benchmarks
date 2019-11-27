@@ -92,19 +92,6 @@ public class MvStore {
   }
 
   @Benchmark
-  public void readXxh64(final Reader r, final Blackhole bh) {
-    long result = 0;
-    final Iterator<byte[]> iter = r.map.keyIterator(null);
-    while (iter.hasNext()) {
-      final byte[] k = iter.next();
-      final byte[] v = r.map.get(k);
-      result += xx_r39().hashBytes(k);
-      result += xx_r39().hashBytes(v);
-    }
-    bh.consume(result);
-  }
-
-  @Benchmark
   public void write(final Writer w, final Blackhole bh) {
     w.write();
   }

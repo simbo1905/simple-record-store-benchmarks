@@ -29,6 +29,7 @@ import org.openjdk.jmh.infra.Blackhole;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -46,7 +47,7 @@ import static org.openjdk.jmh.annotations.Scope.Benchmark;
 @SuppressWarnings({"checkstyle:javadoctype", "checkstyle:designforextension"})
 public class Chronicle {
 
-  // Chroncile Map does not provide ordered keys, so no CRC/XXH64/rev/prev test
+  // Chroncile Map does not provide ordered keys, so no rev/prev test
   @Benchmark
   public void readKey(final Reader r, final Blackhole bh) {
     for (final int key : r.keys) {
@@ -57,6 +58,19 @@ public class Chronicle {
       }
       bh.consume(r.map.getUsing(r.wkb.byteArray(), r.wvb.byteArray()));
     }
+  }
+
+  @Benchmark
+  public void readCrc(final Reader r, final Blackhole bh) {
+    r.crc.reset();
+    final Iterator<byte[]> iter = r.map.keySet().iterator();
+    while (iter.hasNext()) {
+      final byte[] k = iter.next();
+      final byte[] v = r.map.get(k);
+      r.crc.update(k);
+      r.crc.update(v);
+    }
+    bh.consume(r.crc.getValue());
   }
 
   @Benchmark

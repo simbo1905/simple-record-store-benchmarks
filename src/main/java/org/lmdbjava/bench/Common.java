@@ -28,6 +28,8 @@ import static java.lang.System.out;
 import java.util.zip.CRC32;
 import jnr.posix.FileStat;
 import jnr.posix.POSIX;
+
+import static jnr.posix.POSIXFactory.getNativePOSIX;
 import static jnr.posix.POSIXFactory.getPOSIX;
 import org.agrona.collections.IntHashSet;
 import org.apache.commons.math3.random.BitsStreamGenerator;
@@ -51,7 +53,7 @@ public class Common {
 
   static final byte[] RND_MB = new byte[1_048_576];
   static final int STRING_KEY_LENGTH = 16;
-  private static final POSIX POSIX = getPOSIX();
+  private static final POSIX POSIX = getNativePOSIX();
   private static final BitsStreamGenerator RND = new MersenneTwister();
   private static final int S_BLKSIZE = 512; // from sys/stat.h
   private static final File TMP_BENCH;
