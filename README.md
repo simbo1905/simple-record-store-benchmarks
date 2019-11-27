@@ -5,11 +5,11 @@
 This is a fork and modification of the [JMH](http://openjdk.java.net/projects/code-tools/jmh/) benchmark
 of open source, embedded, pure java, disk backed, key-value stores available from Java:
 
-* [MVStore](http://h2database.com/html/mvstore.html) (pure Java)
-* [MapDB](http://www.mapdb.org/) (pure Java)
-* [Xodus](https://github.com/JetBrains/xodus) (pure Java)
-* [Chroncile Map](https://github.com/OpenHFT/Chronicle-Map) (pure Java) (**)
-* [SimpleRecordStore](https://github.com/simbo1905/simple-record-store) (pure Java) (**)
+* [MVStore](http://h2database.com/html/mvstore.html) 1.4.200
+* [MapDB](http://www.mapdb.org/) 3.0.7
+* [Xodus](https://github.com/JetBrains/xodus) 1.0.0-RC6
+* [Chroncile Map](https://github.com/OpenHFT/Chronicle-Map) 3.17.7 (**)
+* [SimpleRecordStore](https://github.com/simbo1905/simple-record-store) 1.3.124 (**)
 
 (**) does not support ordered keys, so iteration benchmarks not performed
 
