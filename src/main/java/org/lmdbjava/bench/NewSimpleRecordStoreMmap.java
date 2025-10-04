@@ -30,6 +30,8 @@ import org.openjdk.jmh.infra.Blackhole;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -39,20 +41,13 @@ import static org.openjdk.jmh.annotations.Mode.SampleTime;
 import static org.openjdk.jmh.annotations.Scope.Benchmark;
 
 @OutputTimeUnit(MILLISECONDS)
-//@Fork(jvmArgsAppend = {"-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005", "-ea"})
 @Fork(1)
 @Warmup(iterations = 3)
 @Measurement(iterations = 3)
 @BenchmarkMode(SampleTime)
 @SuppressWarnings({"checkstyle:javadoctype", "checkstyle:designforextension"})
-public class SimpleRecordStore {
+public class NewSimpleRecordStoreMmap {
 
-//  static {
-//    Logger.getLogger("").setLevel(java.util.logging.Level.FINEST);
-//    Logger.getLogger("").getHandlers()[0].setLevel(java.util.logging.Level.FINEST);
-//  }
-
-  // FileRecordStore does not provide ordered keys, so no CRC/XXH64/rev/prev test
   @Benchmark
   public void readKey(final Reader r, final Blackhole bh) throws IOException {
     for (final int key : r.keys) {
@@ -90,17 +85,17 @@ public class SimpleRecordStore {
 
   @State(value = Benchmark)
   @SuppressWarnings("checkstyle:visibilitymodifier")
-  public static class SimpleRecordStoreMap extends Common {
+  public static class NewSimpleRecordStoreMmapMap extends Common {
 
     FileRecordStore map;
 
     /**
-     * Writable key buffer. Backed by a plain byte[] for Chroncile API ease.
+     * Writable key buffer. 
      */
     MutableDirectBuffer wkb;
 
     /**
-     * Writable value buffer. Backed by a plain byte[] for Chroncile API ease.
+     * Writable value buffer.
      */
     MutableDirectBuffer wvb;
 
@@ -111,12 +106,17 @@ public class SimpleRecordStore {
       wvb = new UnsafeBuffer(new byte[valSize]);
 
       try {
-        // Use new Builder API for backward compatibility comparison
+        // Create builder for FileRecordStore API with memory mapping
         FileRecordStore.Builder builder = new FileRecordStore.Builder();
-        builder.path(new File(tmp, "srs.map").getCanonicalPath());
+        
+        // Configure for the benchmark
+        builder.byteArrayKeys(intKey ? 4 : 16); // 4 bytes for integer keys, 16 for string keys
         builder.preallocatedRecords(num);
-        builder.byteArrayKeys(64); // Default max key length
-        builder.useMemoryMapping(false); // Use classic RandomAccessFile mode
+        builder.tempFile("new-srs-mmap-", ".map");
+        
+        // Enable memory mapping for maximum performance
+        builder.useMemoryMapping(true);
+        
         map = builder.open();
       } catch (final IOException ex) {
         throw new IllegalStateException(ex);
@@ -126,7 +126,7 @@ public class SimpleRecordStore {
     @Override
     public void teardown() throws IOException {
       reportSpaceBeforeClose();
-      map.close();
+      map.close(); // Clean close - no explicit flush, rely on memory mapping
       super.teardown();
     }
 
@@ -148,18 +148,19 @@ public class SimpleRecordStore {
         } else {
           wvb.putInt(0, key);
         }
-        byte[] k = wkb.byteArray();
-        if( !map.recordExists(k)){
-          map.insertRecord(k, wvb.byteArray());
+        
+        // New API uses byte arrays directly
+        if (!map.recordExists(wkb.byteArray())) {
+          map.insertRecord(wkb.byteArray(), wvb.byteArray());
         } else {
-          map.updateRecord(k, wvb.byteArray());
+          map.updateRecord(wkb.byteArray(), wvb.byteArray());
         }
       }
     }
   }
 
   @State(Benchmark)
-  public static class Reader extends SimpleRecordStoreMap {
+  public static class Reader extends NewSimpleRecordStoreMmapMap {
 
     @Setup(Trial)
     @Override
@@ -177,7 +178,7 @@ public class SimpleRecordStore {
 
   @SuppressWarnings("checkstyle:javadoctype")
   @State(Benchmark)
-  public static class Writer extends SimpleRecordStoreMap {
+  public static class Writer extends NewSimpleRecordStoreMmapMap {
 
     @Setup(Invocation)
     @Override
@@ -191,5 +192,4 @@ public class SimpleRecordStore {
       super.teardown();
     }
   }
-
 }

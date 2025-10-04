@@ -132,6 +132,42 @@ Six comprehensive test configurations in results/run.sh:
 - Pure Java: GC tuning required, memory limitations at scale
 - Chronicle Map: No ordered iteration, replication support
 
+## Results Processing with process.sh
+
+The `results/process.sh` script automatically generates performance graphs and markdown tables from benchmark CSV output. It processes the 6 standard test configurations and creates visualizations for comprehensive analysis.
+
+### What process.sh Does:
+
+1. **Data Extraction**: Parses CSV files from each test configuration (1-6)
+2. **Name Normalization**: Converts implementation names to readable format (e.g., "MapDb" → "MapDB")
+3. **Performance Plots**: Generates PNG graphs showing ms/op for different operations
+4. **Storage Analysis**: Creates disk usage tables with overhead percentages
+5. **Multi-format Output**: Produces both visual graphs and markdown tables
+
+### Generated Outputs:
+- **PNG Graphs**: Performance comparisons across all benchmark operations
+- **Markdown Tables**: Disk usage statistics with overhead calculations
+- **Processed Data**: Cleaned .dat files for further analysis
+
+### Key Functions:
+- `layout()`: Reformats CSV data for gnuplot consumption
+- `plot_4()`: Creates 6-panel comparison plots for 1M entry tests
+- `plot_5()`: Generates 3-panel plots for 10M entry tests  
+- `size_fragment()`: Builds markdown tables showing storage efficiency
+- `fix_names()`: Standardizes implementation names across outputs
+
+### Usage:
+```bash
+cd results/DATE
+../process.sh
+```
+
+This creates comprehensive visual analysis including:
+- LMDB tuning parameter comparisons (safe vs unsafe, sync vs no-sync)
+- Storage efficiency across different value sizes (100B to 16KB)
+- Performance scaling from 1M to 10M entries
+- Batch size optimization for LSM tree implementations
+
 ## JMH Annotation Processing Issues
 
 If you encounter `ERROR: Unable to find the resource: /META-INF/BenchmarkList`, this means JMH's annotation processor didn't generate the required benchmark metadata. This typically happens when:
