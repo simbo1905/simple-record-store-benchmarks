@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static net.openhft.hashing.LongHashFunction.xx_r39;
 import static org.mapdb.DBMaker.fileDB;
 import static org.mapdb.Serializer.BYTE_ARRAY;
 import static org.openjdk.jmh.annotations.Level.Invocation;

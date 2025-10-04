@@ -59,9 +59,15 @@
     <github.org>com.github.trex-paxos</github.org>
     <github.repo>simple-record-store-benchmarks</github.repo>
     <license.licenseName>apache_v2</license.licenseName>
-    <jmh.version>1.22</jmh.version>
+    <jmh.version>1.37</jmh.version>
     <uberjar.name>benchmarks</uberjar.name>
     <cpd.skip>true</cpd.skip>
+    <!-- JVM arguments for Java 21+ compatibility -->
+    <jvm.args>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED</jvm.args>
+    <!-- Maven plugin versions -->
+    <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+    <maven.shade.plugin.version>3.6.0</maven.shade.plugin.version>
+    <maven.project.info.reports.plugin.version>3.8.0</maven.project.info.reports.plugin.version>
   </properties>
   <dependencies>
     <dependency>
@@ -84,12 +90,18 @@
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-generator-annprocess</artifactId>
       <version>${jmh.version}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-bytecode</artifactId>
+      <version>${jmh.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-posix</artifactId>
-      <version>3.0.51</version>
+      <version>3.1.19</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -99,12 +111,12 @@
     <dependency>
       <groupId>org.agrona</groupId>
       <artifactId>agrona</artifactId>
-      <version>0.9.7</version>
+      <version>1.23.0</version>
     </dependency>
     <dependency>
       <groupId>net.openhft</groupId>
       <artifactId>zero-allocation-hashing</artifactId>
-      <version>0.6</version>
+      <version>0.16</version>
     </dependency>
     <dependency>
       <groupId>org.mapdb</groupId>
@@ -235,7 +247,9 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -258,7 +272,13 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>org.openjdk.jmh.Main</mainClass>
                 </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/services/java.util.spi.ToolProvider</resource>
+                </transformer>
               </transformers>
+              <manifestEntries>
+                <Add-Opens>java.base/java.lang java.base/java.util java.base/java.lang.reflect java.base/java.text java.desktop/java.awt.font</Add-Opens>
+              </manifestEntries>
             </configuration>
           </execution>
         </executions>
@@ -266,9 +286,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
         <configuration>
-          <source>9</source>
-          <target>9</target>
+          <release>21</release>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.openjdk.jmh</groupId>
+              <artifactId>jmh-generator-annprocess</artifactId>
+              <version>${jmh.version}</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
     </plugins>
@@ -278,7 +305,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.8.0</version>
       </plugin>
     </plugins>
   </reporting>
